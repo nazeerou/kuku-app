@@ -1,0 +1,652 @@
+:host {
+  display: block;
+  background: #f4f7fc;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #14264d;
+}
+
+* { box-sizing: border-box; }
+
+.reports-page {
+  min-height: 100vh;
+  padding-bottom: 30px;
+}
+
+.content {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px 14px;
+}
+
+/* ============================================
+   HEADER — identical to Flock Management
+   ============================================ */
+.top-header {
+  background: linear-gradient(135deg, #4b1d8f, #6a3bbd);
+  color: white;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 10px #00000019;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  color: white;
+  font-size: 24px;
+  display: flex;
+  text-decoration: none;
+}
+
+.brand h2 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 700;
+  color: white;
+}
+
+/* ============================================
+   ACTION ROW — Export / Print (purple theme)
+   ============================================ */
+.action-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 13px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.2s ease;
+
+    ion-icon { font-size: 18px; }
+
+    &:hover { opacity: 0.92; transform: translateY(-1px); }
+  }
+
+  .export-btn {
+    background: #4b1d8f;
+    color: #ffffff;
+  }
+
+  .print-btn {
+    background: #ede4ff;
+    color: #4b1d8f;
+  }
+}
+
+/* ============================================
+   FILTERS
+   ============================================ */
+.filter-section {
+  background: white;
+  border: 1px solid #dce5f5;
+  border-radius: 17px;
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.period-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  button {
+    border: 1px solid #dce5f5;
+    background: #f4f7fc;
+    color: #4b1d8f;
+    padding: 9px 14px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &.active {
+      background: #4b1d8f;
+      color: white;
+      border-color: #4b1d8f;
+    }
+
+    &:hover:not(.active) {
+      background: #ede4ff;
+    }
+  }
+}
+
+.custom-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b1d8f;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  input {
+    padding: 10px 12px;
+    border: 1px solid #d5deed;
+    border-radius: 10px;
+    background: #f9fbff;
+    font-size: 14px;
+    outline: none;
+
+    &:focus { border-color: #4b1d8f; }
+  }
+}
+
+/* ============================================
+   LOADING / ERROR
+   ============================================ */
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  color: #4b1d8f;
+  font-weight: 600;
+}
+
+.error-state ion-icon {
+  font-size: 26px;
+  color: #c52222;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* ============================================
+   REPORT PERIOD
+   ============================================ */
+.report-period {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ede4ff;
+  border: 1px solid #d8c7ff;
+  border-radius: 13px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+
+  span {
+    color: #4b1d8f;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+  }
+
+  strong {
+    color: #4b1d8f;
+    font-weight: 700;
+  }
+}
+
+/* ============================================
+   PROFIT SUMMARY
+   ============================================ */
+.profit-section {
+  background: linear-gradient(135deg, #4b1d8f, #6a3bbd);
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 16px #4b1d8f33;
+}
+
+.profit-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  span {
+    font-size: 11px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    font-weight: 700;
+  }
+
+  h2 {
+    margin: 5px 0 0;
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 800;
+  }
+}
+
+.profit-indicator {
+  background: #ffffff26;
+  color: #ffffff;
+  border: 1px solid #ffffff45;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &.negative {
+    background: #ffffff1a;
+    border-color: #ffb4b4;
+    color: #ffe2e2;
+  }
+
+  ion-icon { font-size: 18px; }
+}
+
+.profit-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+
+  > div {
+    background: #ffffff1a;
+    border-radius: 13px;
+    padding: 12px;
+
+    span {
+      display: block;
+      font-size: 11px;
+      opacity: 0.85;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    strong {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .expense-value { color: #ffd0d0; }
+  }
+
+  .profit-total {
+    background: #ffffff;
+    color: #4b1d8f;
+
+    span { color: #4b1d8f; opacity: 1; }
+    strong { color: #4b1d8f; }
+  }
+}
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #dce5f5;
+  border-radius: 17px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    ion-icon { font-size: 24px; }
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    display: block;
+  }
+
+  h3 {
+    margin: 3px 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #14264d;
+  }
+
+  small {
+    font-size: 11px;
+    color: #94a3b8;
+  }
+}
+
+.revenue-card    { .stat-icon { background: #ede4ff; color: #4b1d8f; } }
+.expense-card    { .stat-icon { background: #fff0c9; color: #a66a05; } }
+.collection-card { .stat-icon { background: #d7f8e0; color: #11853e; } }
+.debt-card       { .stat-icon { background: #ffe0e0; color: #c52222; } }
+
+/* ============================================
+   REPORT SECTIONS
+   ============================================ */
+.report-section {
+  background: white;
+  border: 1px solid #dce5f5;
+  border-radius: 17px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+
+  h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: #4b1d8f;
+  }
+
+  p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  > ion-icon {
+    font-size: 26px;
+    color: #7047F5;
+    flex-shrink: 0;
+  }
+}
+
+/* Production grid */
+.production-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+
+  > div {
+    background: #f4f7fc;
+    border: 1px solid #e2e8f2;
+    border-radius: 13px;
+    padding: 14px 10px;
+    text-align: center;
+
+    strong {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      color: #4b1d8f;
+      margin-bottom: 3px;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+    }
+  }
+}
+
+/* Feed summary */
+.feed-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+
+  > div {
+    background: #f4f7fc;
+    border-radius: 13px;
+    padding: 12px;
+
+    span {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    strong {
+      font-size: 15px;
+      font-weight: 800;
+      color: #4b1d8f;
+    }
+  }
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 13px;
+  border: 1px solid #e2e8f2;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead {
+    background: #ede4ff;
+
+    th {
+      padding: 11px 12px;
+      text-align: left;
+      color: #4b1d8f;
+      font-weight: 800;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
+
+  tbody td {
+    padding: 11px 12px;
+    border-top: 1px solid #eef2f8;
+    color: #27364e;
+  }
+
+  tbody tr:hover { background: #f9fbff; }
+
+  .amount {
+    color: #4b1d8f;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+}
+
+/* Bar items */
+.bar-item {
+  margin-bottom: 14px;
+
+  &:last-child { margin-bottom: 0; }
+
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+
+    strong {
+      font-size: 13px;
+      color: #14264d;
+      font-weight: 700;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 800;
+      color: #4b1d8f;
+    }
+  }
+
+  .bar-track {
+    height: 10px;
+    background: #eef2f8;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  .sales-fill {
+    background: linear-gradient(90deg, #4b1d8f, #7047F5);
+  }
+
+  .expense-fill {
+    background: linear-gradient(90deg, #c52222, #e34d4d);
+  }
+
+  small {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+}
+
+/* Flock grid */
+.flock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+
+  > div {
+    background: #f4f7fc;
+    border: 1px solid #e2e8f2;
+    border-radius: 13px;
+    padding: 12px;
+
+    strong {
+      display: block;
+      font-size: 14px;
+      color: #4b1d8f;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    span {
+      display: block;
+      font-size: 12px;
+      color: #27364e;
+      font-weight: 600;
+    }
+
+    small {
+      display: block;
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+  }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  background: #f4f7fc;
+  border-radius: 13px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Footer */
+.report-footer {
+  text-align: center;
+  padding: 22px 10px 8px;
+  margin-top: 10px;
+  border-top: 1px dashed #dce5f5;
+
+  strong {
+    display: block;
+    color: #4b1d8f;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  span {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+  }
+
+  small {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+  .content { padding: 12px 10px; }
+
+  .action-row {
+    justify-content: stretch;
+
+    button { flex: 1; justify-content: center; }
+  }
+
+  .profit-breakdown {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-card {
+    padding: 12px;
+
+    .stat-icon { width: 40px; height: 40px; }
+  }
+}
+
+/* ============================================
+   PRINT
+   ============================================ */
+@media print {
+  .no-print { display: none !important; }
+  :host { background: white; }
+  .top-header { box-shadow: none; border-radius: 0; }
+  .report-section,
+  .profit-section,
+  .stat-card { break-inside: avoid; }
+}

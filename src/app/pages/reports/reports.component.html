@@ -1,0 +1,308 @@
+<div class="reports-page">
+
+  <!-- HEADER (matches Flock Management exactly) -->
+  <header class="top-header">
+    <div class="header-left">
+      <a routerLink="/home" class="back-btn">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </a>
+
+      <div class="brand">
+        <h2>Reports</h2>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ACTION ROW (export / print) -->
+    <section class="action-row no-print">
+      <button class="export-btn" (click)="exportCSV()">
+        <ion-icon name="download-outline"></ion-icon>
+        Excel / CSV
+      </button>
+
+      <button class="print-btn" (click)="printReport()">
+        <ion-icon name="print-outline"></ion-icon>
+        PDF / Print
+      </button>
+    </section>
+
+    <!-- DATE FILTERS -->
+    <section class="filter-section no-print">
+      <div class="period-buttons">
+        <button [class.active]="selectedPeriod === 'today'" (click)="setPeriod('today')">Today</button>
+        <button [class.active]="selectedPeriod === 'week'"  (click)="setPeriod('week')">This Week</button>
+        <button [class.active]="selectedPeriod === 'month'" (click)="setPeriod('month')">This Month</button>
+        <button [class.active]="selectedPeriod === 'year'"  (click)="setPeriod('year')">This Year</button>
+      </div>
+
+      <div class="custom-dates">
+        <label>
+          From
+          <input type="date" [(ngModel)]="startDate" (change)="onCustomDateChange()">
+        </label>
+
+        <label>
+          To
+          <input type="date" [(ngModel)]="endDate" (change)="onCustomDateChange()">
+        </label>
+      </div>
+    </section>
+
+    <!-- LOADING -->
+    <div class="loading-state" *ngIf="isLoading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading business reports...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-state" *ngIf="!isLoading && errorMessage">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="!isLoading && reportData && !errorMessage">
+
+      <div class="report-period">
+        <span>REPORT PERIOD</span>
+        <strong>{{ startDate }} — {{ endDate }}</strong>
+      </div>
+
+      <!-- PROFIT SUMMARY -->
+      <section class="profit-section">
+        <div class="profit-heading">
+          <div>
+            <span>NET BUSINESS PROFIT</span>
+            <h2>TZS {{ summary.netProfit | number:'1.0-0' }}</h2>
+          </div>
+
+          <div class="profit-indicator" [class.negative]="summary.netProfit < 0">
+            <ion-icon [name]="summary.netProfit >= 0
+              ? 'trending-up-outline'
+              : 'trending-down-outline'"></ion-icon>
+            {{ summary.netProfit >= 0 ? 'Profit' : 'Loss' }}
+          </div>
+        </div>
+
+        <div class="profit-breakdown">
+          <div>
+            <span>Sales Revenue</span>
+            <strong>TZS {{ summary.totalRevenue | number:'1.0-0' }}</strong>
+          </div>
+
+          <div>
+            <span>Feed Consumption Cost</span>
+            <strong class="expense-value">- TZS {{ summary.feedCost | number:'1.0-0' }}</strong>
+          </div>
+
+          <div>
+            <span>Other Expenses</span>
+            <strong class="expense-value">- TZS {{ summary.otherExpenses | number:'1.0-0' }}</strong>
+          </div>
+
+          <div class="profit-total">
+            <span>Profit Margin</span>
+            <strong>{{ profitMargin | number:'1.1-1' }}%</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW CARDS -->
+      <section class="stats-grid">
+        <div class="stat-card revenue-card">
+          <div class="stat-icon"><ion-icon name="cash-outline"></ion-icon></div>
+          <div>
+            <span>Total Revenue</span>
+            <h3>TZS {{ summary.totalRevenue | number:'1.0-0' }}</h3>
+            <small>{{ summary.totalSales }} sales transactions</small>
+          </div>
+        </div>
+
+        <div class="stat-card expense-card">
+          <div class="stat-icon"><ion-icon name="wallet-outline"></ion-icon></div>
+          <div>
+            <span>Total Expenses</span>
+            <h3>TZS {{ summary.totalExpenses | number:'1.0-0' }}</h3>
+            <small>Feed + other expenses</small>
+          </div>
+        </div>
+
+        <div class="stat-card collection-card">
+          <div class="stat-icon"><ion-icon name="checkmark-circle-outline"></ion-icon></div>
+          <div>
+            <span>Amount Collected</span>
+            <h3>TZS {{ summary.amountCollected | number:'1.0-0' }}</h3>
+            <small>Recorded sales payments</small>
+          </div>
+        </div>
+
+        <div class="stat-card debt-card">
+          <div class="stat-icon"><ion-icon name="time-outline"></ion-icon></div>
+          <div>
+            <span>Outstanding Balance</span>
+            <h3>TZS {{ summary.outstandingBalance | number:'1.0-0' }}</h3>
+            <small>Unpaid sales balance</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- EGG PRODUCTION -->
+      <section class="report-section">
+        <div class="section-heading">
+          <div>
+            <h3>Egg Production</h3>
+            <p>Production performance for the selected period</p>
+          </div>
+          <ion-icon name="egg-outline"></ion-icon>
+        </div>
+
+        <div class="production-grid">
+          <div><strong>{{ summary.totalEggs | number:'1.0-0' }}</strong><span>Total Eggs</span></div>
+          <div><strong>{{ summary.netEggs | number:'1.0-0' }}</strong><span>Good Eggs</span></div>
+          <div><strong>{{ summary.brokenEggs | number:'1.0-0' }}</strong><span>Broken Eggs</span></div>
+          <div><strong>{{ summary.totalTrays | number:'1.1-1' }}</strong><span>Equivalent Trays</span></div>
+        </div>
+      </section>
+
+      <!-- FEED REPORT -->
+      <section class="report-section">
+        <div class="section-heading">
+          <div>
+            <h3>Feed Management Report</h3>
+            <p>Feed purchased, consumed and consumption cost</p>
+          </div>
+          <ion-icon name="leaf-outline"></ion-icon>
+        </div>
+
+        <div class="feed-summary">
+          <div>
+            <span>Purchased</span>
+            <strong>{{ summary.feedPurchasedKg | number:'1.1-1' }} kg</strong>
+          </div>
+          <div>
+            <span>Consumed</span>
+            <strong>{{ summary.feedConsumedKg | number:'1.1-1' }} kg</strong>
+          </div>
+          <div>
+            <span>Consumption Cost</span>
+            <strong>TZS {{ summary.feedCost | number:'1.0-0' }}</strong>
+          </div>
+        </div>
+
+        <div class="table-wrapper" *ngIf="feedCosts.length">
+          <table>
+            <thead>
+              <tr>
+                <th>Feed Type</th>
+                <th>Consumed (kg)</th>
+                <th>Average Price/kg</th>
+                <th>Consumed Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let feed of feedCosts">
+                <td>{{ feed.feedType }}</td>
+                <td>{{ feed.consumedKg | number:'1.1-1' }}</td>
+                <td>TZS {{ feed.averagePricePerKg | number:'1.0-0' }}</td>
+                <td class="amount">TZS {{ feed.consumedCost | number:'1.0-0' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!feedCosts.length">
+          No feed consumption records for this period.
+        </div>
+      </section>
+
+      <!-- SALES REPORT -->
+      <section class="report-section">
+        <div class="section-heading">
+          <div>
+            <h3>Sales Analysis</h3>
+            <p>Revenue generated by each product</p>
+          </div>
+          <ion-icon name="cart-outline"></ion-icon>
+        </div>
+
+        <div *ngIf="salesByProduct.length; else noSales">
+          <div class="bar-item" *ngFor="let item of salesByProduct">
+            <div class="bar-label">
+              <strong>{{ item.product }}</strong>
+              <span>TZS {{ item.revenue | number:'1.0-0' }}</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill sales-fill"
+                   [style.width.%]="item.revenue / maxSalesProductRevenue * 100"></div>
+            </div>
+            <small>{{ item.quantity }} units sold</small>
+          </div>
+        </div>
+
+        <ng-template #noSales>
+          <div class="empty-state">No sales records for this period.</div>
+        </ng-template>
+      </section>
+
+      <!-- EXPENSE REPORT -->
+      <section class="report-section">
+        <div class="section-heading">
+          <div>
+            <h3>Expenses Analysis</h3>
+            <p>Other expenses grouped by category</p>
+          </div>
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+
+        <div *ngIf="expensesByCategory.length; else noExpenses">
+          <div class="bar-item" *ngFor="let item of expensesByCategory">
+            <div class="bar-label">
+              <strong>{{ item.category }}</strong>
+              <span>TZS {{ item.amount | number:'1.0-0' }}</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill expense-fill"
+                   [style.width.%]="item.amount / maxExpenseCategoryAmount * 100"></div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noExpenses>
+          <div class="empty-state">No other expenses for this period.</div>
+        </ng-template>
+      </section>
+
+      <!-- FLOCK OVERVIEW -->
+      <section class="report-section">
+        <div class="section-heading">
+          <div>
+            <h3>Flock Overview</h3>
+            <p>Current farm flock information</p>
+          </div>
+          <ion-icon name="paw-outline"></ion-icon>
+        </div>
+
+        <div class="flock-grid">
+          <div *ngFor="let flock of reportData.flocks">
+            <strong>{{ flock.name }}</strong>
+            <span>{{ flock.birds | number }} birds</span>
+            <small>{{ flock.layingHens | number }} laying hens</small>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="!reportData.flocks.length">
+          No flock records available.
+        </div>
+      </section>
+
+      <!-- REPORT FOOTER -->
+      <div class="report-footer">
+        <strong>LAYORA</strong>
+        <span>Poultry Farming Management System</span>
+        <small>Generated on {{ today | date:'medium' }}</small>
+      </div>
+
+    </ng-container>
+  </main>
+</div>
